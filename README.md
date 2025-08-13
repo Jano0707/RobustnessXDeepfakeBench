@@ -6,13 +6,13 @@ RobustnessXDeepfakeBench ist eine Erweiterung von DeepfakeBench zur Untersuchung
 
 Dieses Projekt nutzt unter anderem folgende Open-Source-Bibliotheken:
 
-- **OpenCV** – [MIT License](https://github.com/opencv/opencv/blob/master/LICENSE)  
+- **OpenCV** – [Apache License](https://github.com/opencv/opencv/blob/master/LICENSE)  
   Copyright (c) 2014-2023, OpenCV team
 
 - **Albumentations** – [MIT License](https://github.com/albumentations-team/albumentations/blob/main/LICENSE)  
   Copyright (c) 2018, Alexandr Buslaev, Vladimir Iglovikov, Alexander Parinov
 
-- **NumPy** – [BSD 3-Clause License](https://github.com/numpy/numpy/blob/main/LICENSE.txt)  
+- **NumPy** – [License](https://github.com/numpy/numpy/blob/main/LICENSE.txt)  
   Copyright (c) 2005-2023, NumPy Developers
 
 - **Python Standard Library** – [Python Software Foundation License](https://docs.python.org/3/license.html)  
