@@ -114,7 +114,7 @@ def main(args):
             img_steps = process_image(input_img, cfg, net)
             # Save final image to specified output filename
             base_name = os.path.splitext(os.path.basename(input_file))[0]  # ohne Endung
-            out_filename = os.path.join(args.output, f"{base_name}_bf")  # keine Endung hier
+            out_filename = os.path.join(args.output, f"{base_name}")  # keine Endung hier
             # Check for --show-detections flag
             output_img = check_if_adding_bboxes(args, img_steps)
             # Save image
@@ -138,7 +138,7 @@ def main(args):
                     img_steps = process_image(input_img, cfg, net)
                     # Save final image to specified output filename
                     base_name = os.path.splitext(os.path.basename(file))[0]  # ohne Endung
-                    out_filename = os.path.join(args.output, f"{base_name}_bf")  # keine Endung hier
+                    out_filename = os.path.join(args.output, f"{base_name}")  # keine Endung hier
                      # Check for --show-detections flag
                     output_img = check_if_adding_bboxes(args, img_steps)
                     # Save image
@@ -153,7 +153,7 @@ def main(args):
         output_height = cfg['image']['img_steps_height']
         # Set output filename
         steps_base = os.path.splitext(cfg['image']['output_steps'])[0]
-        steps_filename = os.path.join(args.output, f"{steps_base}_bf")
+        steps_filename = os.path.join(args.output, f"{steps_base}")
         # Save file
         save_steps(steps_filename, img_steps, output_height)
 
