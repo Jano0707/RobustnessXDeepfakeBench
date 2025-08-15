@@ -1,4 +1,4 @@
-Das ist die README des Originalprojekts [Face-smoothing](https://github.com/5starkarma/face-smoothing/)
+Das ist die README des Originalprojekts [Face-Smoothing](https://github.com/5starkarma/face-smoothing/)
 
 
 # Face Smoothing: Detection and Beautification
