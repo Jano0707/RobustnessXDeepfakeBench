@@ -28,7 +28,7 @@ Dieses Projekt basiert auf und nutzt unter anderem folgende Open-Source-Software
   Copyright (c) 2023, CUHK(SZ)  
   Modifiziert im Rahmen dieses Projekts, siehe `/DeepfakeBench/README.md`.
 
-- **face-smoothing** – [MIT License](https://github.com/5starkarma/face-smoothing/blob/master/LICENSE)  
+- **face-smoothing**  
   Originalprojekt: GitHub [5starkarma/face-smoothing](https://github.com/5starkarma/face-smoothing)  
   Modifiziert im Rahmen dieses Projekts für RGB-Ausgabe und Erhalt der Original-Bildmaße, siehe `/Bildmanipulationen/README.md`.
 
