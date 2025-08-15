@@ -1,0 +1,1 @@
+python infer.py --input "../bilder" --output "../output/bilder" --save-steps
