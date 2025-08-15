@@ -109,7 +109,8 @@ def load_image(path):
     image : np.array [H,W,3]
         RGB image
     """
-    return cv2.imread(path)
+    image = cv2.imread(path)
+    return cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
 
 
 def create_img_output_path(filename):
@@ -159,7 +160,8 @@ def save_image(filename, img):
     # Create filename
     filename = create_img_output_path(filename)
     # Save image
-    return cv2.imwrite(filename, img)
+    output_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    return cv2.imwrite(filename, output_rgb)
 
 
 def get_height_and_width(img):

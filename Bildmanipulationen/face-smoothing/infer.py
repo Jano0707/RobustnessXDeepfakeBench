@@ -83,7 +83,7 @@ def save_image(filename, image):
     while os.path.exists(save_path):
         counter += 1
         save_path = f"{base}{counter}{ext}"
-	output_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    output_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     cv2.imwrite(save_path, output_rgb)
     return save_path
 
