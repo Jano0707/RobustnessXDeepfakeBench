@@ -1,0 +1,87 @@
+vorher:
+conda activate DFBench
+
+xception:
+python3 training/test.py --detector_path ./training/config/config/detector/xception.yaml --test_dataset "UADFV" --weights_path ./training/weights/xception_best.pth
+
+effort:
+python3 training/test.py   --detector_path ./training/config/config/detector/effort.yaml   --test_dataset "UADFV"   --weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth
+
+
+Zum speichern der Metriken um Darstellungen zu erzeugen:
+
+python3 training/test.py --detector_path ./training/config/config/detector/xception.yaml --test_dataset "UADFV" --weights_path ./training/weights/xception_best.pth --analysis_dir ./analysis --save_predictions --save_features
+
+bzw.:
+
+python3 training/test.py   --detector_path ./training/config/config/detector/effort.yaml   --test_dataset "UADFV"   --weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth --analysis_dir ./analysis --save_predictions --save_features
+
+
+Experiment 1: Baseline-Ergebnisse
+
+# Xception - UADFV
+python3 training/test.py \
+  --detector_path ./training/config/config/detector/xception.yaml \
+  --test_dataset "UADFV" \
+  --weights_path ./training/weights/xception_best.pth \
+  --tag baseline \
+  --metrics_outdir analysis_outputs/metrics
+  
+# Effort - UADFV
+python3 training/test.py   --detector_path ./training/config/config/detector/effort.yaml   --test_dataset "UADFV"   --weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth   --tag baseline   --metrics_outdir analysis_outputs/metrics
+
+# Xception - DFDC-Preview
+python3 training/test.py \
+  --detector_path ./training/config/config/detector/xception.yaml \
+  --test_dataset "DFDC-preview" \
+  --weights_path ./training/weights/xception_best.pth \
+  --tag baseline \
+  --metrics_outdir analysis_outputs/metrics
+
+# Xception - DeepfakeDetection (FF++)
+python3 training/test.py \
+  --detector_path ./training/config/config/detector/xception.yaml \
+  --test_dataset "DeepFakeDetection" \
+  --weights_path ./training/weights/xception_best.pth
+  --tag baseline \
+  --metrics_outdir analysis_outputs/metrics
+  
+# Effort - DFDC-Preview
+python3 training/test.py \
+  --detector_path ./training/config/config/detector/effort.yaml \
+  --test_dataset "DFDC-preview" \
+  --weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth
+  --tag baseline \
+  --metrics_outdir analysis_outputs/metrics
+
+# Effort - DeepfakeDetection (FF++)
+python3 training/test.py \
+  --detector_path ./training/config/config/detector/effort.yaml \
+  --test_dataset "DeepFakeDetection" \
+  --weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth
+  --tag baseline \
+  --metrics_outdir analysis_outputs/metrics
+
+
+Experiment 2: Robustheit gegenüber realitätsnahen Bildmanipulationen
+
+
+
+Darstellungen der Ergebnisse:
+
+Tabellen (Exp 1 & Exp2) -> für die Namensgebung der Tabellen intern von exp1 auf exp2 ändern:
+(nutzt standardmäßig die Output-Metriken von test.py unter analysis_output/metrics/ und speichert unter analysis_output/tables)
+python analysis/create_tables.py
+
+ROC-AUC:
+(nutzt standardmäßig die Output-Metriken von test.py unter analysis_output/metrics/ und speichert unter analysis_output/plots/roc/)
+python analysis/plot_roc.py
+
+Precision-Recall: -> falls verwendet werden soll, muss in die Tabellen wieder AP aufgenommen werden, Precision-Recall basiert darauf
+(nutzt standardmäßig die Output-Metriken von test.py unter analysis_output/metrics/ und speichert unter analysis_output/plots/pr/)
+python analysis/plot_pr.py
+
+T-SNE: -> prüfen ob die Parameter ok sind die intern verwendet werden (max points, perplexity, learning rate, seed, pca-dim)
+(nutzt standardmäßig die Output-Metriken von test.py unter analysis_output/metrics/ und speichert unter analysis_output/plots/tsne/)
+python analysis/plot_tsne.py
+ 

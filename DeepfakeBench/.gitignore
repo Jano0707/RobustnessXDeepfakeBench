@@ -1,0 +1,29 @@
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Checkpoints / Modelle
+*.pth
+*.pt
+*.ckpt
+training/weights/
+training/pretrained/
+training/networks/clip-vit-large-patch14/
+
+# Datasets & Videos
+datasets/
+data/
+videos/
+
+# Outputs & Logs
+analysis_outputs/
+outputs/
+logs/
+runs/
+*.log
+
+# Temp & Sonstiges
+*.npy
+*.npz
+*.pkl
