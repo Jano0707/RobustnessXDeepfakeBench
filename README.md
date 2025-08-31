@@ -17,8 +17,8 @@ Das Repository ist in zwei Hauptordner unterteilt:
   - JPEG-Kompression
   - Schwarz-Weiß-Umwandlung
   - Gesichtsglättung (basierend auf dem face-smoothing Projekt)
-  - Hinzufügen von Text-Overlays  
-  Details zu den einzelnen Manipulationen und zu den Änderungen am Originalprojekt *face-smoothing* finden sich in [`/Bildmanipulationen/README.md`](Bildmanipulationen/README.md).
+  - Hinzufügen von Text-Overlays   
+Details zu den einzelnen Manipulationen und zu den Änderungen am Originalprojekt *face-smoothing* finden sich in [`/Bildmanipulationen/README.md`](Bildmanipulationen/README.md).
 
 ## Drittanbieter-Software und Lizenzen
 
