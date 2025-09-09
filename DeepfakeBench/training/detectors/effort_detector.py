@@ -40,14 +40,14 @@ class EffortDetector(nn.Module):
 
     def build_backbone(self, config):
         # Download model
-        # https://huggingface.co/openai/clip-vit-large-patch14 -> siehe ./utils/clip-vit-large-patch14
+        # https://huggingface.co/openai/clip-vit-large-patch14 -> siehe training/networks/utils/clip-vit-large-patch14
         
         # mean: [0.48145466, 0.4578275, 0.40821073]
         # std: [0.26862954, 0.26130258, 0.27577711]
         
         # ViT-L/14 224*224
         clip_model = CLIPModel.from_pretrained(
-		os.path.expanduser("~/DeepfakeBench/training/networks/clip-vit-large-patch14")
+		os.path.expanduser("~/Jano-DFBench/RobustnessXDeepfakeBench/DeepfakeBench/training/networks/clip-vit-large-patch14")
 	)
 
 
@@ -55,11 +55,11 @@ class EffortDetector(nn.Module):
         # ViT-L/14 224*224: 1024-1
         clip_model.vision_model = apply_svd_residual_to_self_attn(clip_model.vision_model, r=1024-1)
 
-        for name, param in clip_model.vision_model.named_parameters():
-            print('{}: {}'.format(name, param.requires_grad))
+        #for name, param in clip_model.vision_model.named_parameters():
+            #print('{}: {}'.format(name, param.requires_grad))
         num_param = sum(p.numel() for p in clip_model.vision_model.parameters() if p.requires_grad)
         num_total_param = sum(p.numel() for p in clip_model.vision_model.parameters())
-        print('Number of total parameters: {}, tunable parameters: {}'.format(num_total_param, num_param))
+        #print('Number of total parameters: {}, tunable parameters: {}'.format(num_total_param, num_param))
 
         return clip_model.vision_model
 

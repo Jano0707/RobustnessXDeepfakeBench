@@ -13,6 +13,10 @@ Original dataset structure before the preprocessing:
             -c23
                 -videos
                     *.mp4
+        - actors
+            -c23
+                -videos
+                    *.mp4
     -manipulated_sequences
         -Deepfakes
             -c23
@@ -439,16 +443,27 @@ if __name__ == '__main__':
     # Define dataset path based on the input arguments
     ## faceforensic++
     if dataset_name == 'FaceForensics++':
-        sub_dataset_names = ["original_sequences/youtube","original_sequences/actors", \
-                             "manipulated_sequences/Deepfakes", \
-                            "manipulated_sequences/Face2Face", "manipulated_sequences/FaceSwap", \
-                            "manipulated_sequences/NeuralTextures","manipulated_sequences/FaceShifter",\
+        sub_dataset_names = ["original_sequences/youtube",
+                            "manipulated_sequences/Deepfakes",
+                            "manipulated_sequences/Face2Face",
+                            "manipulated_sequences/FaceSwap",
+                            "manipulated_sequences/NeuralTextures",
+                            "manipulated_sequences/FaceShifter"]
+        sub_dataset_paths = [Path(os.path.join(dataset_path, name, comp)) for name in sub_dataset_names]
+        # mask
+        mask_dataset_names = ["manipulated_sequences/Deepfakes",
+        "manipulated_sequences/Face2Face",
+        "manipulated_sequences/FaceSwap",
+        "manipulated_sequences/NeuralTextures"]
+        # mask_dataset_names = []
+        mask_dataset_paths = [Path(os.path.join(dataset_path, name)) for name in mask_dataset_names]
+    ## DeepFakeDetection
+    elif dataset_name == 'DeepFakeDetection':
+        sub_dataset_names = ["original_sequences/actors",
                             "manipulated_sequences/DeepFakeDetection"]
         sub_dataset_paths = [Path(os.path.join(dataset_path, name, comp)) for name in sub_dataset_names]
         # mask
-        mask_dataset_names = ["manipulated_sequences/Deepfakes", "manipulated_sequences/Face2Face", \
-                            "manipulated_sequences/FaceSwap", "manipulated_sequences/NeuralTextures",\
-                            "manipulated_sequences/DeepFakeDetection"]
+        mask_dataset_names = ["manipulated_sequences/DeepFakeDetection"]
         # mask_dataset_names = []
         mask_dataset_paths = [Path(os.path.join(dataset_path, name)) for name in mask_dataset_names]
     ## Celeb-DF-v1

@@ -2,6 +2,7 @@ import os
 import json
 import cv2
 import lmdb
+from tqdm import tqdm
 import yaml
 from PIL import Image
 import io
@@ -18,29 +19,77 @@ def file_to_binary(file_path):
 
 
 def create_lmdb_dataset(source_folder, lmdb_path, dataset_name, map_size):
-    """创建LMDB数据集"""
-    # 打开LMDB文件，创建数据库
-    db = lmdb.open(lmdb_path, map_size=map_size)
-    with db.begin(write=True) as txn:
-        for root, dirs, files in os.walk(source_folder,followlinks=True):
-            print(root)
-            if 'video' in root:
-                continue
+
+    # Ordner anlegen
+    os.makedirs(lmdb_path, exist_ok=True)
+    env = lmdb.open(
+        lmdb_path,
+        map_size=map_size,
+        subdir=True,          # wir wollen data.mdb/lock.mdb in einem Ordner
+        lock=True,
+        readahead=False,
+        writemap=False,
+        max_readers=126,
+    )
+
+    # Whitelist: nur diese Dateitypen in die DB
+    ALLOWED = (".png", ".jpg", ".jpeg", ".npy")
+
+    def norm_key(path: str) -> bytes:
+        rel = os.path.relpath(path, source_folder)
+        rel = rel.replace(os.sep, "/")  # portable
+        return f"{dataset_name}/{rel}".encode("utf-8")
+
+    written = 0
+    BATCH = 2000
+    txn = env.begin(write=True)
+
+    try:
+        # Wir iterieren rekursiv über source_folder
+        for root, dirs, files in os.walk(source_folder, followlinks=True):
+            # explizit .mp4 ignorieren
+            files = [f for f in files if f.lower().endswith(ALLOWED)]
             for file in files:
-                print(file)
-                image_path = os.path.join(root, file)
-                # 生成相对路径键
-                relative_path = f"{dataset_name}\\" + os.path.relpath(image_path, source_folder)
-                key = relative_path.encode('utf-8')
-                # txn.delete(key)
-                # relative_path = f"{dataset_name}\\original_sequences" + os.path.relpath(image_path, source_folder)
-                # key = relative_path.encode('utf-8')
-                value = file_to_binary(image_path)
+                p = os.path.join(root, file)
 
-                # 写入数据库
-                txn.put(key, value)
+                # Datei -> Bytes
+                try:
+                    val = file_to_binary(p)
+                except Exception as e:
+                    print(f"[WARN] skip {p}: {e}")
+                    continue
 
-    db.close()
+                key = norm_key(p)
+
+                try:
+                    txn.put(key, val)
+                except lmdb.MapFullError:
+                    # mapsize erhöhen (x2) und nochmal versuchen
+                    txn.abort()
+                    curr = env.info()["map_size"]
+                    new_size = int(curr * 2)
+                    env.set_mapsize(new_size)
+                    txn = env.begin(write=True)
+                    txn.put(key, val)
+
+                written += 1
+                if written % BATCH == 0:
+                    txn.commit()
+                    txn = env.begin(write=True)
+
+        # finaler Commit
+        txn.commit()
+
+    finally:
+        env.sync()
+        env.close()
+
+    # Kurzer Check
+    env = lmdb.open(lmdb_path, readonly=True, lock=False, readahead=False, subdir=True)
+    stat = env.stat()
+    print(f"[OK] LMDB geschrieben: {lmdb_path}  | Einträge: {stat.get('entries', 0)}")
+    env.close()
+
  
 
 def read_lmdb(lmdb_dir_path):

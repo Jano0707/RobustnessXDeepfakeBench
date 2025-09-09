@@ -1,7 +1,5 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
-Precision�Recall-Kurven zeichnen (pro Dataset) aus DeepfakeBench-Ausgaben.
+Precision-Recall-Kurven zeichnen (pro Dataset) aus DeepfakeBench-Ausgaben.
 
 Nutzt:
 - JSON-Metriken (wie in analysis_outputs/metrics erzeugt)

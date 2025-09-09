@@ -2,6 +2,7 @@ import os
 import argparse
 import yaml
 import time
+from types import SimpleNamespace
 
 import cv2
 import matplotlib
@@ -76,7 +77,7 @@ def save_image(filename, image):
     """
     base, ext = os.path.splitext(filename)
     if not ext:
-        ext = ".jpg"
+        ext = ".png"
 
     counter = 0
     save_path = base + ext
@@ -122,27 +123,28 @@ def main(args):
 
         # If input_file is a dir
         elif is_directory(input_file):
-            # For each file in the dir
-            for file in os.listdir(input_file):
-                # Join input dir and file name
-                file = os.path.join(input_file, file)
-                # If file is a compatible video file
-                if is_video(file):
-                    # Process video
-                    process_video(file, args, cfg, net)
-                # If file is a compatible image file    
-                if is_image(file):
-                    # Load image
-                    input_img = load_image(file)
-                    # Process image
-                    img_steps = process_image(input_img, cfg, net)
-                    # Save final image to specified output filename
-                    base_name = os.path.splitext(os.path.basename(file))[0]  # ohne Endung
-                    out_filename = os.path.join(args.output, f"{base_name}")  # keine Endung hier
-                     # Check for --show-detections flag
-                    output_img = check_if_adding_bboxes(args, img_steps)
-                    # Save image
-                    img_saved = save_image(out_filename, output_img)
+            for root, _, files in os.walk(input_file):
+                # Relativen Pfad zum Eingabe-Root bestimmen, um die Struktur in das Output-Dir zu spiegeln
+                rel = os.path.relpath(root, input_file)
+                out_dir = os.path.join(args.output, rel) if rel != '.' else args.output
+                os.makedirs(out_dir, exist_ok=True)
+                
+                for fname in files:
+                    fpath = os.path.join(root, fname)
+                    
+                    if is_video(fpath):
+                        local_args = SimpleNamespace(**vars(args))
+                        local_args.output = out_dir
+                        process_video(fpath, local_args, cfg, net)
+                    
+                    elif is_image(fpath):
+                        input_img = load_image(fpath)
+                        img_steps = process_image(input_img, cfg, net)
+                        base_name = os.path.splitext(os.path.basename(fpath))[0]
+                        out_filename = os.path.join(out_dir, f"{base_name}")
+                        output_img = check_if_adding_bboxes(args, img_steps)
+                        # speichern
+                        _ = save_image(out_filename, output_img)
 
     except ValueError:
         print('Input must be a valid image, video, or directory.')

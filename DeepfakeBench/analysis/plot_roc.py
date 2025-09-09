@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 ROC-Kurven zeichnen (pro Dataset) aus DeepfakeBench-Ausgaben.
 
@@ -21,6 +19,8 @@ import argparse, json, re, os
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+
+FILL_ALPHA = 0.18
 
 # ---------------------------
 # Hilfsfunktionen
@@ -125,7 +125,7 @@ def _roc_curve(y_true: np.ndarray, y_score: np.ndarray):
 def _style_maps(detectors):
     cmap = plt.get_cmap("tab10")
     det2color = {det: cmap(i % 10) for i, det in enumerate(detectors)}
-    tag2style = lambda tag: "-" if tag.lower()=="baseline" else "--"
+    tag2style = lambda tag: "-" #if tag.lower()=="baseline" else "--"
     return det2color, tag2style
 
 # ---------------------------
@@ -165,9 +165,11 @@ def plot_dataset(df: pd.DataFrame, dataset: str, outdir: Path, search_root: Path
         y_true, y_score = _load_preds(y_true_p, y_score_p)
         FPR, TPR, thr, auc = _roc_curve(y_true, y_score)
 
-        ax.plot(FPR, TPR, tag2style(tag), color=det2color[det], linewidth=2.0,
+        ax.plot(FPR, TPR, linestyle='-', color=det2color[det], linewidth=1.5,
                 label=f"{det}  AUC={auc:.4f}")
-
+        # Fläche unter der Kurve füllen
+        ax.fill_between(FPR, TPR, 0.0, color=det2color[det], alpha=FILL_ALPHA, linewidth=0)
+        
         # CSV sammeln
         for f, t in zip(FPR, TPR):
             csv_rows.append({
@@ -175,7 +177,7 @@ def plot_dataset(df: pd.DataFrame, dataset: str, outdir: Path, search_root: Path
                 "fpr": float(f), "tpr": float(t)
             })
 
-    ax.plot([0,1],[0,1], ":", color="#666666", linewidth=1.0)
+    ax.plot([0,1],[0,1], ":", color="#666666", linewidth=1.5, label='Random Detector')
     ax.set_xlim(0,1); ax.set_ylim(0,1)
     ax.legend(loc="lower right", frameon=True, framealpha=0.9)
 
@@ -209,9 +211,6 @@ def main():
         # Suche zunächst unter results_dir, falls nichts gefunden wird, wird _guess_pred_files
         # automatisch auch breiter fündig (patterns sind rekursiv).
         plot_dataset(df, str(dset), outdir, search_root=search_root)
-        # Falls du möchtest zusätzlich noch den Parent probieren, kannst du die folgende Zeile
-        # aktivieren und vorheriges Ergebnis überschreiben, wenn mehr Kurven gefunden wurden.
-        # plot_dataset(df, str(dset), outdir, search_root=parent_root)
 
 if __name__ == "__main__":
     main()

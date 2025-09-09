@@ -52,13 +52,10 @@ parser.add_argument('--weights_path', type=str,
 parser.add_argument('--metrics_outdir', type=str, default='analysis_outputs/metrics',
                     help='Wohin die JSON-Metriken + y_true/y_score (+feat) geschrieben werden')
 parser.add_argument('--tag', type=str, default='baseline',
-                    help='Label für diesen Run (z.B. baseline, grayscale, jpeg_comp, face_smoothing, text_overlay)')
+                    help='Label für diesen Run (z.B. baseline, schwarz-weiß, jpeg-comp, face-smoothing, text-overlay, cross-domain, within-domain)')
+parser.add_argument('--exp', choices=['gen','rob'], default='gen',
+                    help='Experiment: gen = Generalisierung, rob = Robustheit')
                     
-# können weg
-parser.add_argument('--save_predictions', action='store_true', default=True,
-                    help='Speichere y_true/y_score je Datensatz')
-parser.add_argument('--save_features', action='store_true', default=True,
-                    help='Speichere Feature-Vektoren je Datensatz (falls vom Modell geliefert)')
 
 args = parser.parse_args()
 
@@ -191,7 +188,7 @@ def test_epoch(model, test_data_loaders):
         
         # NEU: Speichern für Analysis
         os.makedirs(args.metrics_outdir, exist_ok=True)
-        y_true_path, y_score_path, feat_path = _pred_paths(args.metrics_outdir, detector_name, key, args.tag)
+        y_true_path, y_score_path, feat_path = _pred_paths(args.metrics_outdir, detector_name, key, args.exp, args.tag)
 
         # NEU: y_true (1D)
         y_true = np.asarray(label_nps, dtype=np.int64).reshape(-1)
@@ -215,7 +212,7 @@ def test_epoch(model, test_data_loaders):
         # NEU: JSON mit Pfaden
         _dump_metrics_json(
             detector_name, key, metric_one_dataset, num_used, num_total,
-            args.metrics_outdir, args.tag, mode="frame",
+            args.metrics_outdir, args.exp, args.tag, mode="frame",
             y_true_path=y_true_path, y_score_path=y_score_path, feat_path=saved_feat_path
         )
 
@@ -231,26 +228,22 @@ def inference(model, data_dict):
     predictions = model(data_dict, inference=True)
     return predictions
     
-# NEU
-def _make_records_dir(detector_name, analysis_root, exp='exp1'):
-    rec_dir = os.path.join(analysis_root, f'{exp}_records_{detector_name}')
-    os.makedirs(rec_dir, exist_ok=True)
-    return rec_dir
 
 # NEU
-def _pred_paths(outdir, detector_name, dataset_name, tag):
-    base = f"{detector_name}__{dataset_name}__{tag}"
+def _pred_paths(outdir, detector_name, dataset_name, exp, tag):
+    base = f"{detector_name}__{dataset_name}__{exp}-{tag}"
     y_true_path  = os.path.join(outdir, base + "_y_true.npy")
     y_score_path = os.path.join(outdir, base + "_y_score.npy")
     feat_path    = os.path.join(outdir, base + "_feat.npy")
     return y_true_path, y_score_path, feat_path
 
 # NEU  
-def _dump_metrics_json(detector_name, dataset_name, metrics, used, total, outdir, tag, mode="frame", y_true_path=None, y_score_path=None, feat_path=None):
+def _dump_metrics_json(detector_name, dataset_name, metrics, used, total, outdir, exp, tag, mode="frame", y_true_path=None, y_score_path=None, feat_path=None):
     os.makedirs(outdir, exist_ok=True)
     payload = {
         "detector": detector_name,
         "dataset": dataset_name,
+        "exp": exp,
         "tag": tag,                 # z.B. "baseline" oder "grayscale"
         "mode": mode,               # hier "frame"
         "count_total": int(total),
@@ -265,11 +258,10 @@ def _dump_metrics_json(detector_name, dataset_name, metrics, used, total, outdir
         "y_score_path": y_score_path,
         "feat_path": feat_path,
     }
-    out_path = os.path.join(outdir, f"{detector_name}__{dataset_name}__{tag}.json")
+    out_path = os.path.join(outdir, f"{detector_name}__{dataset_name}__{exp}-{tag}.json")
     with open(out_path, 'w', encoding='utf-8') as f:
         json.dump(payload, f, indent=2)
     print(f"[Metriken] gespeichert: {out_path}")
-
 
 
 def main():
@@ -295,7 +287,20 @@ def main():
     # set cudnn benchmark if needed
     if config['cudnn']:
         cudnn.benchmark = True
-
+       
+       
+    """ 
+    Trainingsergebnisse für FaceForensics c23 -> Basis für Generalisierung
+    
+    Trainingssplit für FaceForensics++-Familie evaluieren, aber weiter im Eval-Modus (keine Augmentierung)
+    
+    -> falls normale Tests --> setze train_result = false
+    """
+    use_train_data = False
+    if use_train_data:
+        config.update(eval_split='train', use_data_augmentation=False)
+    
+    
     # prepare the testing data loader
     test_data_loaders = prepare_testing_data(config)
     

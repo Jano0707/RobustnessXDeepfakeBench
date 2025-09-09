@@ -1,10 +1,10 @@
 preprocess:
-  dataset_name: # the name of dataset
-    choices: ['FaceForensics++','Celeb-DF-v1', 'Celeb-DF-v2', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV']
-    default: 'UADFV'
+  dataset_name:
+    choices: ['FaceForensics++', 'DeepFakeDetection', 'Celeb-DF-v1', 'Celeb-DF-v2', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV']
+    default: 'DeepFakeDetection' # hier: Celeb-DF-v2 oder FaceForensics++
   dataset_root_path: # the root path to the dataset
     type: str
-    default: '/home/user/DeepfakeBench/datasets/rgb'
+    default: '../datasets/rgb/' # hier ggf. anpassen
   comp: # the compression level of videos, only in the dataset of FaceForensics++.
     choices: ['raw', 'c23', 'c40']
     default: 'c23'
@@ -20,14 +20,14 @@ preprocess:
 
 rearrange:
   dataset_name: # the name of dataset
-    choices: ['FaceForensics++', 'DeepFakeDetection', 'Celeb-DF-v1', 'Celeb-DF-v2','DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
-    default: 'UADFV'
+    choices: ['FaceForensics++', 'DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-JPEG', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', 'Celeb-DF-v1', 'Celeb-DF-v2', 'Celeb-DF-v2-FACE', 'Celeb-DF-v2-JPEG', 'Celeb-DF-v2-S_W', 'Celeb-DF-v2-TEXT', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
+    default: 'Celeb-DF-v2' # hier: Celeb-DF-v2 oder FaceForensics++
   dataset_root_path: # the root path to the dataset
     type: str
-    default: '/home/user/DeepfakeBench/datasets/rgb'
+    default: '/media/user/PortableSSD/datasets/rgb' # hier anpassen: .../datasets/rgb
   output_file_path: # the json path to the dataset
     type: str
-    default: '/home/user/DeepfakeBench/preprocessing/dataset_json'
+    default: '/home/user/Jano-DFBench/RobustnessXDeepfakeBench/DeepfakeBench/preprocessing/dataset_json' # hier anpassen: .../preprocessing/dataset_json
   comp: # the compression level of videos, only in the dataset of FaceForensics++.
     choices: ['raw', 'c23', 'c40']
     default: 'c23'
@@ -39,14 +39,14 @@ rearrange:
 
 to_lmdb:
   dataset_name: # the name of dataset
-    choices: ['FaceForensics++', 'DeepFakeDetection', 'Celeb-DF-v1', 'Celeb-DF-v2','DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
-    default: 'UADFV'
+    choices: ['FaceForensics++', 'DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-JPEG', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', 'Celeb-DF-v1', 'Celeb-DF-v2','Celeb-DF-v2-FACE', 'Celeb-DF-v2-JPEG', 'Celeb-DF-v2-S_W', 'Celeb-DF-v2-TEXT', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
+    default: 'Celeb-DF-v2' # hier: Celeb-DF-v2 oder FaceForensics++
   dataset_root_path: # the root path to the dataset
     type: str
-    default: './datasets/rgb'
+    default: '/media/user/PortableSSD/datasets/rgb' # hier anpassen: .../datasets/rgb
   output_lmdb_dir: # the json path to the dataset
     type: str
-    default: './datasets/lmdb'
+    default: '/media/user/PortableSSD/datasets/lmdb' # hier anpassen: .../datasets/lmdb
   comp: # the compression level of videos, only in the dataset of FaceForensics++.
     choices: ['raw', 'c23', 'c40']
-    default: 'raw'
+    default: 'c23'

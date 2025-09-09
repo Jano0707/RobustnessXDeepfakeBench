@@ -1,8 +1,9 @@
 mode: test
 lmdb: true
 rgb_dir: ''
-lmdb_dir:  '/home/user/DeepfakeBench/datasets/lmdb'
-dataset_json_folder: '/home/user/DeepfakeBench/preprocessing/dataset_json'
+lmdb_dir:  '/media/user/PortableSSD/datasets/lmdb' # hier Pfad ändern
+#lmdb_dir: '/home/user/datasets/lmdb'
+dataset_json_folder: '/home/user/Jano-DFBench/RobustnessXDeepfakeBench/DeepfakeBench/preprocessing/dataset_json'
 label_dict:
   # DFD
   DFD_fake: 1

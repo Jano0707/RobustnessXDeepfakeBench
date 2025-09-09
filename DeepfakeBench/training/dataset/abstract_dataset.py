@@ -31,7 +31,7 @@ import albumentations as A
 
 from .albu import IsotropicResize
 
-FFpp_pool=['FaceForensics++','FaceShifter','DeepFakeDetection','FF-DF','FF-F2F','FF-FS','FF-NT']#
+FFpp_pool=['FaceForensics++','FaceShifter','FF-DF','FF-F2F','FF-FS','FF-NT']#
 
 def all_in_pool(inputs,pool):
     for each in inputs:
@@ -188,9 +188,29 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
             cp = 'c40'
         # Get the information for the current dataset
         for label in dataset_info[dataset_name]:
-            sub_dataset_info = dataset_info[dataset_name][label][self.mode]
+        
+        
+        
+        
+        
+            """
+            Falls normaler Test -> sub_dataset_info = ...[self.mode] aktivieren und nächsten beiden Zeilen auskommentieren
+            
+            Falls Test auf Trainingsdatensatz FF++ c23 als Basis für Generalsiierung andersrum
+            
+            #sub_dataset_info = dataset_info[dataset_name][label][self.mode]
+            split = self.config.get('eval_split', self.mode)  # 'train' erzwingen, falls gesetzt
+            sub_dataset_info = dataset_info[dataset_name][label][split]
+            """
+            split = self.config.get('eval_split', self.mode)
+            sub_dataset_info = dataset_info[dataset_name][label][split]
+
+            
+            
+            
+            
             # Special case for FaceForensics++ and DeepFakeDetection, choose the compression type
-            if cp == None and dataset_name in ['FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT', 'FaceForensics++','DeepFakeDetection','FaceShifter']:
+            if cp == None and dataset_name in ['FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT', 'FaceForensics++','DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', 'DeepFakeDetection-JPEG', 'FaceShifter']:
                 sub_dataset_info = sub_dataset_info[self.compression]
             elif cp == 'c40' and dataset_name in ['FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT', 'FaceForensics++','DeepFakeDetection','FaceShifter']:
                 sub_dataset_info = sub_dataset_info['c40']
@@ -279,7 +299,32 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
         
         return frame_path_list, label_list, video_name_list
 
-     
+
+    def _lmdb_key_from_abs_rgb(self, abs_path: str) -> str:
+        """
+        Mappe einen absoluten Pfad wie
+          /home/user/datasets/rgb/FaceForensics++/manipulated_sequences/...
+        auf den LMDB-Key:
+          FaceForensics++/manipulated_sequences/...
+        """
+        p = os.path.abspath(abs_path).replace('\\', '/')
+        # Primärer Schnitt: nach '/rgb/'
+        anchor = '/rgb/'
+        i = p.lower().find(anchor)
+        if i != -1:
+            key = p[i + len(anchor):]
+        else:
+            # Fallback: benutze konfiguriertes RGB-Root, falls vorhanden
+            rgb_root = str(self.config.get('rgb_dir', '')).replace('\\', '/').rstrip('/') + '/'
+            if rgb_root != '/' and p.startswith(rgb_root):
+                key = p[len(rgb_root):]
+            else:
+                # letzter Fallback: nichts schneiden (führt evtl. zu None -> gute Fehlermeldung)
+                key = p
+        # LMDB-Schlüssel wurden mit Forward-Slashes geschrieben
+        return key
+ 
+    
     def load_rgb(self, file_path):
         """
         Load an RGB image from a file path and resize it to a specified resolution.
@@ -297,30 +342,25 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
         if not self.lmdb:
             #if not file_path[0] == '.':
                 #file_path =  f'./{self.config["rgb_dir"]}\\'+file_path
+            
             assert os.path.exists(file_path), f"{file_path} does not exist"
             img = cv2.imread(file_path)
             if img is None:
                 raise ValueError('Loaded image is None: {}'.format(file_path))
         elif self.lmdb:
+            key = self._lmdb_key_from_abs_rgb(file_path)
             with self.env.begin(write=False) as txn:
-                rgb_root = '/home/user/DeepfakeBench/datasets/rgb/'
-                # Nur umwandeln, wenn der Pfad aus dem RGB-Stamm kommt
-                if file_path.startswith(rgb_root):
-                    relative_path = file_path[len(rgb_root):]  # z. B. UADFV/real/frames/...
-                    # Split in zwei Teile: 'UADFV' und 'real/frames/...'
-                    first_part, second_part = relative_path.split('/', 1)
-                    #print(f"FIRST: {first_part} -> LAST: {second_part}")
-                    first_part = first_part + '/'
-                    first_part = first_part.replace('/', '\\')
-                    
-                    # Ersetze / in erstem Part durch \
-                    lmdb_key = first_part + second_part
-                    
-                    file_path = lmdb_key  # finaler Key
-
-                image_bin = txn.get(file_path.encode())
-                image_buf = np.frombuffer(image_bin, dtype=np.uint8)
-                img = cv2.imdecode(image_buf, cv2.IMREAD_COLOR)
+                image_bin = txn.get(key.encode('utf-8'))
+                if image_bin is None:
+                    raise RuntimeError(
+                        "LMDB key not found.\n"
+                        f"  original path: {file_path}\n"
+                        f"  expected key : {key}\n"
+                        "Prüfe, ob die LMDB mit Forward-Slashes erstellt wurde und ob der Key existiert.")
+                buf = np.frombuffer(image_bin, dtype=np.uint8)
+                img = cv2.imdecode(buf, cv2.IMREAD_COLOR)
+                if img is None:
+                    raise ValueError(f"cv2.imdecode failed for LMDB key: {key}")
         img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
         img = cv2.resize(img, (size, size), interpolation=cv2.INTER_CUBIC)
         return Image.fromarray(np.array(img, dtype=np.uint8))
@@ -488,6 +528,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
         augmentation_seed = None
 
         for image_path in image_paths:
+            #print(f"Iamge_path: {image_path}")
             # Initialize a new seed for data augmentation at the start of each video
             if self.video_level and image_path == image_paths[0]:
                 augmentation_seed = random.randint(0, 2**32 - 1)
@@ -501,7 +542,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
             try:
                 image = self.load_rgb(image_path)
             except Exception as e:
-            # Fehler beim Laden des Bildes  Protokolliere den Pfad, der Probleme macht
+            # Fehler beim Laden des Bildes - Protokolliere den Pfad, der Probleme macht
                 print(f"Error loading image at index {index}: {e}")
                 print(f"Trying to load image at path: {image_path}")
                 # Vermeide Endlosschleifen, indem du eine sichere Alternative implementierst!
