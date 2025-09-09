@@ -1,29 +1,54 @@
-# Python Cache
+# ----------------------------
+# Python Cache / Temp
+# ----------------------------
 __pycache__/
 *.pyc
 *.pyo
+*.pyd
+*.so
 
-# Checkpoints / Modelle
+# ----------------------------
+# Modelle & Checkpoints
+# ----------------------------
 *.pth
 *.pt
 *.ckpt
-training/weights/
-training/pretrained/
-training/networks/clip-vit-large-patch14/
+*.onnx
 
+# ----------------------------
+# Training (nur Struktur behalten)
+# ----------------------------
+training/weights/**
+!training/weights/.gitkeep
+training/pretrained/**
+!training/pretrained/.gitkeep
+training/networks/clip-vit-large-patch14/**
+!training/networks/clip-vit-large-patch14/.gitkeep
+
+# ----------------------------
 # Datasets & Videos
-datasets/
+# ----------------------------
+datasets/**
+!datasets/.gitkeep
 data/
 videos/
 
-# Outputs & Logs
-analysis_outputs/
-outputs/
-logs/
-runs/
-*.log
+# ----------------------------
+# Analysis Outputs
+#   -> Ordner existieren, Inhalte standardmäßig ignorieren
+#   -> bestimmte Unterordner behalten (inkl. Inhalt)
+# ----------------------------
+analysis_outputs/**
+!analysis_outputs/.gitkeep
+!analysis_outputs/metrics/**
+!analysis_outputs/tables/**
+!analysis_outputs/plots/
+!analysis_outputs/plots/pr/**
+!analysis_outputs/plots/roc/**
+!analysis_outputs/plots/tsne/**
 
-# Temp & Sonstiges
-*.npy
-*.npz
-*.pkl
+# ----------------------------
+# Preprocessing: dataset_json (leer aber vorhanden)
+# ----------------------------
+preprocessing/dataset_json/**
+!preprocessing/dataset_json/.gitkeep
