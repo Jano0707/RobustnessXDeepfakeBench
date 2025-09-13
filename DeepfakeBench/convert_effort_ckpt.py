@@ -12,7 +12,6 @@ def strip_module_prefix(state_dict):
     return new_sd
 
 def extract_state_dict(obj):
-    # viele Checkpoints sind Diktate mit 'state_dict' oder 'model'
     if isinstance(obj, dict):
         for key in ("state_dict", "model", "weights", "params"):
             if key in obj and isinstance(obj[key], dict):
@@ -26,7 +25,6 @@ def main(inp, outp):
     ckpt = torch.load(inp, map_location="cpu")
     sd = extract_state_dict(ckpt)
     sd = strip_module_prefix(sd)
-    # Optional: nur die für Effort relevanten Keys behalten (nicht nötig, aber sauber)
     # sd = {k: v for k, v in sd.items() if k.startswith(("backbone.", "head."))}
     torch.save(sd, outp)
     print(f"Konvertiert gespeichert nach: {outp}")

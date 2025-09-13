@@ -45,7 +45,7 @@ Das Unterprojekt basiert auf dem Open-Source-Projekt [face-smoothing](https://gi
 - **Einheitlicher Bild-Output**  
   Ausgaberoutinen so angepasst, dass Bilder unter dem gleichen Dateinamen im angegebenen Zielordner gespeichert werden.
 - **RGB-Output**  
-  Anpassungen, um sicherzustellen, dass Ausgaben im **RGB-Format** gespeichert werden, da OpenCV standardmäßig im BGR-Format arbeitet.  
+  Anpassungen, um sicherzustellen, dass Ausgaben im **RGB-Format** gespeichert werden, da OpenCV standardmäßig im BGR-Format arbeitet. Außerdem arbeitet face-smoothing nun rekursiv, sodass ein Ordner mit Ordnern als Input funktioniert. Zusätzlich wurden Anpassungen vorgenommen, sodass negative Koordinaten des erkannten Gesichts nicht in einem Abbruch enden.
   Änderungen vorgenommen in:
   - `face-smoothing/utils/image.py`: Funktionen `load_image()` und `save_image()`  
   - `face-smoothing/infer.py`: Funktion `save_image()`
@@ -76,5 +76,6 @@ python face-manipulations.py --function=add_text --input=./Beispiel-Bilder --out
 
 ### Face-Smoothing
 ```
-python face-smoothing/infer.py --input './Beispiel-Bilder' --output './Beispiel-Outputs'
+cd face-smoothing
+python infer.py --input './Beispiel-Bilder' --output './Beispiel-Outputs'
 ```
