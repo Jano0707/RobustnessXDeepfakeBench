@@ -52,7 +52,7 @@ parser.add_argument('--weights_path', type=str,
 parser.add_argument('--metrics_outdir', type=str, default='analysis_outputs/metrics',
                     help='Wohin die JSON-Metriken + y_true/y_score (+feat) geschrieben werden')
 parser.add_argument('--tag', type=str, default='baseline',
-                    help='Label für diesen Run (z.B. baseline, schwarz-weiß, jpeg-comp, face-smoothing, text-overlay, cross-domain, within-domain)')
+                    help='Label für diesen Run (z.B. Baseline, Schwarz-Weiss, JPEG, Face-Smoothing, Text-Overlay, Cross-Domain, Within-Domain)')
 parser.add_argument('--exp', choices=['gen','rob'], default='gen',
                     help='Experiment: gen = Generalisierung, rob = Robustheit')
                     

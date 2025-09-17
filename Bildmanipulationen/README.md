@@ -4,12 +4,12 @@ Dieser Ordner enthält alle Implementierungen, die zur Erzeugung realitätsnaher
 
 Der Ordner gliedert sich in:
 
-- **`manipulations.py`** – Hauptskript für verschiedene Bildmanipulationen.
+- **`face-manipulations.py`** – Hauptskript für verschiedene Bildmanipulationen.
 - **`face-smoothing/`** – Modifiziertes GitHub-Projekt [face-smoothing](https://github.com/5starkarma/face-smoothing) für gezielte Weichzeichnung im Gesicht.
 
 ---
 
-## 1. `manipulations.py` – Bildmanipulationen mit Albumentations
+## 1. `face-manipulations.py` – Bildmanipulationen mit Albumentations
 
 Das Skript bietet eine Sammlung von Manipulationsfunktionen, die einzeln per CLI ausgeführt werden können. Die Funktionen arbeiten wahlweise auf Einzelbildern oder auf allen Bildern in einem Verzeichnis.
 
@@ -18,9 +18,6 @@ Das Skript bietet eine Sammlung von Manipulationsfunktionen, die einzeln per CLI
 - **`black_white`**  
   Konvertiert das Bild in eine Schwarz-Weiß-Version unter Beibehaltung der Dimensionen. Weiterhin bleiben die drei Kanäle bestehen, alle 3 Kanäle enthalten die gleichen Graustufenwerte ([Albumentations-Doku](https://explore.albumentations.ai/transform/ToGray)).
 
-- **`rotate_90_left`**  
-  Dreht das Bild um exakt 90° gegen den Uhrzeigersinn unter Beibehaltung der Dimensionen([Albumentations-Doku](https://albumentations.ai/docs/api-reference/albumentations/augmentations/geometric/rotate/#Rotate)).
-
 - **`jpeg_compress`**  
   Simuliert Qualitätsverluste durch JPEG-Kompression unter Beibehaltung der Dimensionen(einstellbarer Qualitätsfaktor, default ist 40) ([Albumentations-Doku](https://explore.albumentations.ai/transform/ImageCompression)).
 
@@ -28,6 +25,7 @@ Das Skript bietet eine Sammlung von Manipulationsfunktionen, die einzeln per CLI
   Fügt zentrierten Text im unteren Bildbereich hinzu.  
   - Automatischer Zeilenumbruch basierend auf Bildbreite.  
   - Dynamischer Text und Farbe (schwarz/weiß) in Abhängigkeit von der Hintergrundhelligkeit.
+  Außerdem kann der Text zentriert auf den Augen, sowie den Augenbrauen hinzugefügt werden. Für die Umsetzung wird DLIB und `shape_predictor_81_face_landmarks.dat` genutzt, um die notwendigen Gesichtsmerkmale zu finden. Durch Tests fiel auf, dass es zum Teil bei kleinen Pixelmaßen Probleme gibt, da die Texte in diesen Fällen nicht den gesamten Bereich abgedeckt haben. Dies würde nicht den gewünschten Effekt erzielen, dass die Detektoren schlechter Artefakte aus diesem Bereich entnehmen können. Entsprechend wird in diesem Fall das Bild auf 1600 x 1600 Pixel vergrößert, der Text wird hinzugefügt und dann auf die Ausgangsmaße zurückgeführt.
   `add_text` behält die Dimensionen bei.
 
 (Optionale, aber aktuell auskommentierte Funktionen für Skalierung und Größenänderung sind ebenfalls enthalten. Zunächst waren sie ebenfalls im Projekt geplant, jedoch erwarten die Detektoren feste Pixelmaße, die durch das Preprocessing erzeugt werden. Diese werden durch die auskommentierten Funktionen geändert.)
@@ -54,24 +52,26 @@ Das Unterprojekt basiert auf dem Open-Source-Projekt [face-smoothing](https://gi
 
 ## 3. Verwendung
 
-### Schwarz-Weiß-Umwandlung
-```
-python face-manipulations.py --function=black_white --input=./Beispiel-Bilder --output=./Beispiel-Outputs
-```
+Für die Anwendung der Bildmanipulationen wird die Nutzung der erstellten Conda-Umgebung empfohlen, da bereits für die Conda-Umgebung, DeepfakeBench, alle verwendeten Imports vorhanden sind.
 
-### Rotation um 90 Grad gegen den Uhrzeigersinn
+### Schwarz-Weiß-Umwandlung
 ```
 python face-manipulations.py --function=black_white --input=./Beispiel-Bilder --output=./Beispiel-Outputs
 ```
 
 ### JPEG-Kompression
 ```
-python face-manipulations.py --function=black_white --input=./Beispiel-Bilder --output=./Beispiel-Outputs --quality=40
+python face-manipulations.py --function=jpeg --input=./Beispiel-Bilder --output=./Beispiel-Outputs --quality=50
 ```
 
 ### Text-Overlay
 ```
-python face-manipulations.py --function=add_text --input=./Beispiel-Bilder --output=./Beispiel-Outputs --text="Hallo ich bin ein Untertitel"
+python face-manipulations.py --function=add_text --input=./Beispiel-Bilder --output=./Beispiel-Outputs --text="Hallo, ich bin ein Untertitel"
+```
+
+### Text-Overlay Augen
+```
+python face-manipulations.py --function=add_text --input=./Beispiel-Bilder --output=./Beispiel-Outputs --text="Hallo, ich bin ein Untertitel" --place="eyes"
 ```
 
 ### Face-Smoothing

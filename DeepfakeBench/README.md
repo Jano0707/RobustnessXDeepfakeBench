@@ -165,7 +165,7 @@ python preprocessing/dataset2lmdb_test.py --dataset_size <SIZE>
 Zur Simulation sozialmedientypischer Veränderungen werden Duplikate der Datensätze erzeugt und **Bildmanipulationen** auf die jeweiligen `frames/`-Ordner angewandt.
 
 > **Namenskonvention:**  
-> Erzeuge Kopien von DeepFakeDetection und Celeb-DF-v2 mit Suffixen wie `-S_W` (Schwarz/Weiß), `-JPEG`, `-TEXT`, `-FACE` (Face Smoothing).  
+> Erzeuge Kopien von DeepFakeDetection und Celeb-DF-v2 mit Suffixen wie `-S_W` (Schwarz/Weiß), `-JPEG`, `-TEXT`, `-TEXT-Mund`, `-FACE` (Face Smoothing).  
 > Beispiel: `Celeb-DF-v2-S_W`, `DeepFakeDetection-JPEG`, …
 
 **Beispielanwendungen der Bildmanipulationen:**

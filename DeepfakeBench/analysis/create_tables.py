@@ -25,8 +25,8 @@ from matplotlib.patches import Rectangle
 METRICS = ["acc","auc", "eer"]   # Spaltenreihenfolge je Dataset
 
 # erlaubte Varianten pro Experiment
-GEN_TAGS = ["baseline", "within-domain", "cross-domain"]
-ROB_TAGS = ["baseline", "grayscale", "jpeg_comp", "face_smoothing", "text_overlay"]
+GEN_TAGS = ["Baseline", "Within-Domain", "Cross-Domain"]
+ROB_TAGS = ["Baseline", "Schwarz-Weiß", "JPEG", "Face-Smoothing", "Text-Overlay"]
 
 HILITE_BG = "#fff7cc"  # Hintergrundfarbe für Overall-Best
 
@@ -45,11 +45,12 @@ def _fmt(x: float, places=4): return f"{x:.{places}f}" if pd.notna(x) else ""
 def _norm_variant(v: str) -> str:
     if not v: return ""
     a = {
-        "bw":"grayscale", "gray":"grayscale", "grey":"grayscale",
-        "jpeg":"jpeg_comp", "jpg":"jpeg_comp", "jpeg_compression":"jpeg_comp",
-        "facesmooth":"face_smoothing", "facesmoothing":"face_smoothing",
-        "indataset":"in-dataset", "in_dataset":"in-dataset",
-        "crossdataset":"cross-dataset", "cross_dataset":"cross-dataset", "cross":"cross-dataset",
+        "baseline":"Baseline",
+        "schwarz-weiss":"Schwarz-Weiß",
+        "JPEG":"JPEG",
+        "face-smoothing":"Face-Smoothing",
+        "within-domain":"Within-Domain",
+        "cross-domain":"Cross-Domain",
     }
     v = v.strip().lower()
     return a.get(v, v)
@@ -444,7 +445,7 @@ def main():
         save_csv_and_md(df1_csv, md1,
                         outdir/"tables_experiment1.csv",
                         outdir/"tables_experiment1.md",
-                        title="Experiment 1 - Generalisierung (ACC/AUC/EER) + Avg. (AUC)")
+                        title="Experiment 1 - Generalisierung")
         _plot_table(df1_csv, "Experiment 1 - Generalisierung", outdir/"tables_experiment1", idx_name="Detektor | Test")
         print(f"[OK] Experiment 1 Tabellen gespeichert unter: {outdir}")
     except Exception as e:
@@ -454,10 +455,10 @@ def main():
     try:
         df2_abs, md2_abs, df2_delta, md2_delta = table_experiment2(df)
         save_csv_and_md(df2_abs,   md2_abs,   outdir/"tables_experiment2.csv",        outdir/"tables_experiment2.md",
-                        title="Experiment 2 - Robustheit (ACC/AUC/EER) + Avg. (AUC)")
+                        title="Experiment 2 - Robustheit")
         save_csv_and_md(df2_delta, md2_delta, outdir/"tables_experiment2_delta.csv",  outdir/"tables_experiment2_delta.md",
                         title="Experiment 2 - Delta zu Baseline (Prozentpunkte)")
-        _plot_table(df2_abs,   "Experiment 2 - Robustheit (ACC/AUC/EER) + Avg. (AUC)", outdir/"tables_experiment2",       idx_name="Detektor")
+        _plot_table(df2_abs,   "Experiment 2 - Robustheit", outdir/"tables_experiment2",       idx_name="Detektor")
         _plot_table(df2_delta, "Experiment 2 - Delta zu Baseline (Prozentpunkte)",  outdir/"tables_experiment2_delta", idx_name="Detektor")
         print(f"[OK] Experiment 2 Tabellen gespeichert unter: {outdir}")
     except Exception as e:

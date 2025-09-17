@@ -210,7 +210,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
             
             
             # Special case for FaceForensics++ and DeepFakeDetection, choose the compression type
-            if cp == None and dataset_name in ['FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT', 'FaceForensics++','DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', 'DeepFakeDetection-JPEG', 'FaceShifter']:
+            if cp == None and dataset_name in ['FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT', 'FaceForensics++','DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', 'DeepFakeDetection-TEXT-Mund', 'DeepFakeDetection-JPEG', 'FaceShifter']:
                 sub_dataset_info = sub_dataset_info[self.compression]
             elif cp == 'c40' and dataset_name in ['FF-DF', 'FF-F2F', 'FF-FS', 'FF-NT', 'FaceForensics++','DeepFakeDetection','FaceShifter']:
                 sub_dataset_info = sub_dataset_info['c40']
