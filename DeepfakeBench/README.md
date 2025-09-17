@@ -366,27 +366,6 @@ Nun hier ein paar allgemeine Informationen zu DeepfakeBench, übernommen aus der
   <img src="figures/archi.png" style="max-width:60%;">
 </div>
 
-<font size=4><b> Table of Contents </b></font>
-
-- [Features](#-features)
-- [Quick Start](#-quick-start)
-  - [Installation](#1-installation)
-  - [Download Data](#2-download-data)
-  - [Preprocessing (optional)](#3-preprocessing-optional)
-  - [Rearrangement](#4-rearrangement)
-  - [Training (optional)](#4-training-optional)
-  - [Evaluation](#5-evaluation)
-- [Supported Detectors](#-supported-detectors)
-- [Results](#-results)
-- [Citation](#-citation)
-- [Copyright](#%EF%B8%8F-license)
-
----
-
-
-## 📚 Features
-<a href="#top">[Back to top]</a>
-
 DeepfakeBench has the following features:
 
 ⭐️  **Detectors** (**36** detectors):
