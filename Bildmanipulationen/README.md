@@ -19,13 +19,13 @@ Das Skript bietet eine Sammlung von Manipulationsfunktionen, die einzeln per CLI
   Konvertiert das Bild in eine Schwarz-Weiß-Version unter Beibehaltung der Dimensionen. Weiterhin bleiben die drei Kanäle bestehen, alle 3 Kanäle enthalten die gleichen Graustufenwerte ([Albumentations-Doku](https://explore.albumentations.ai/transform/ToGray)).
 
 - **`jpeg_compress`**  
-  Simuliert Qualitätsverluste durch JPEG-Kompression unter Beibehaltung der Dimensionen(einstellbarer Qualitätsfaktor, default ist 40) ([Albumentations-Doku](https://explore.albumentations.ai/transform/ImageCompression)).
+  Simuliert Qualitätsverluste durch JPEG-Kompression unter Beibehaltung der Dimensionen(einstellbarer Qualitätsfaktor, default ist 50) ([Albumentations-Doku](https://explore.albumentations.ai/transform/ImageCompression)).
 
 - **`add_text`**  
   Fügt zentrierten Text im unteren Bildbereich hinzu.  
   - Automatischer Zeilenumbruch basierend auf Bildbreite.  
   - Dynamischer Text und Farbe (schwarz/weiß) in Abhängigkeit von der Hintergrundhelligkeit.
-  Außerdem kann der Text zentriert auf den Augen, sowie den Augenbrauen hinzugefügt werden. Für die Umsetzung wird DLIB und `shape_predictor_81_face_landmarks.dat` genutzt, um die notwendigen Gesichtsmerkmale zu finden. Durch Tests fiel auf, dass es zum Teil bei kleinen Pixelmaßen Probleme gibt, da die Texte in diesen Fällen nicht den gesamten Bereich abgedeckt haben. Dies würde nicht den gewünschten Effekt erzielen, dass die Detektoren schlechter Artefakte aus diesem Bereich entnehmen können. Entsprechend wird in diesem Fall das Bild auf 1600 x 1600 Pixel vergrößert, der Text wird hinzugefügt und dann auf die Ausgangsmaße zurückgeführt.
+  Außerdem kann der Text zentriert auf den Augen, sowie dem unteren Bildbereich hinzugefügt werden. Für die Umsetzung wird DLIB und `shape_predictor_81_face_landmarks.dat` genutzt, um die notwendigen Gesichtsmerkmale zu finden. Durch Tests fiel auf, dass es zum Teil bei kleinen Pixelmaßen Probleme gibt, da die Texte in diesen Fällen nicht den gesamten Bereich abgedeckt haben. Dies würde nicht den gewünschten Effekt erzielen, dass die Detektoren schlechter Artefakte aus diesem Bereich entnehmen können. Entsprechend wird in diesem Fall das Bild auf 1600 x 1600 Pixel vergrößert, der Text wird hinzugefügt und dann auf die Ausgangsmaße zurückgeführt.
   `add_text` behält die Dimensionen bei.
 
 (Optionale, aber aktuell auskommentierte Funktionen für Skalierung und Größenänderung sind ebenfalls enthalten. Zunächst waren sie ebenfalls im Projekt geplant, jedoch erwarten die Detektoren feste Pixelmaße, die durch das Preprocessing erzeugt werden. Diese werden durch die auskommentierten Funktionen geändert.)
@@ -59,7 +59,7 @@ Für die Anwendung der Bildmanipulationen wird die Nutzung der erstellten Conda-
 python face-manipulations.py --function=black_white --input=./Beispiel-Bilder --output=./Beispiel-Outputs
 ```
 
-### JPEG-Kompression
+### JPEG-Komprimierung
 ```
 python face-manipulations.py --function=jpeg --input=./Beispiel-Bilder --output=./Beispiel-Outputs --quality=50
 ```

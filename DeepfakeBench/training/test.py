@@ -190,7 +190,7 @@ def test_epoch(model, test_data_loaders):
         os.makedirs(args.metrics_outdir, exist_ok=True)
         y_true_path, y_score_path, feat_path = _pred_paths(args.metrics_outdir, detector_name, key, args.exp, args.tag)
 
-        # NEU: y_true (1D)
+        # NEU:
         y_true = np.asarray(label_nps, dtype=np.int64).reshape(-1)
         np.save(y_true_path, y_true)
 

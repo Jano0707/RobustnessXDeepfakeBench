@@ -20,8 +20,8 @@ preprocess:
 
 rearrange:
   dataset_name: # the name of dataset
-    choices: ['FaceForensics++', 'DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-JPEG', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', 'DeepFakeDetection-TEXT-Mund', 'Celeb-DF-v1', 'Celeb-DF-v2', 'Celeb-DF-v2-FACE', 'Celeb-DF-v2-JPEG', 'Celeb-DF-v2-S_W', 'Celeb-DF-v2-TEXT', 'Celeb-DF-v2-TEXT-Mund', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
-    default: 'DeepFakeDetection-JPEG' # hier: Celeb-DF-v2 oder FaceForensics++
+    choices: ['FaceForensics++', 'DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-JPEG', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', 'DeepFakeDetection-TEXT-Augen', 'Celeb-DF-v1', 'Celeb-DF-v2', 'Celeb-DF-v2-FACE', 'Celeb-DF-v2-JPEG', 'Celeb-DF-v2-S_W', 'Celeb-DF-v2-TEXT', 'Celeb-DF-v2-TEXT-Augen', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
+    default: 'DeepFakeDetection-TEXT-Augen' # hier: Celeb-DF-v2 oder FaceForensics++
   dataset_root_path: # the root path to the dataset
     type: str
     default: '/media/user/PortableSSD/datasets/rgb' # hier anpassen: .../datasets/rgb
@@ -39,8 +39,8 @@ rearrange:
 
 to_lmdb:
   dataset_name: # the name of dataset
-    choices: ['FaceForensics++', 'DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-JPEG', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', DeepFakeDetection-TEXT-Mund', 'Celeb-DF-v1', 'Celeb-DF-v2','Celeb-DF-v2-FACE', 'Celeb-DF-v2-JPEG', 'Celeb-DF-v2-S_W', 'Celeb-DF-v2-TEXT', 'Celeb-DF-v2-TEXT-Mund', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
-    default: 'DeepFakeDetection-JPEG' # hier: Celeb-DF-v2 oder FaceForensics++
+    choices: ['FaceForensics++', 'DeepFakeDetection', 'DeepFakeDetection-FACE', 'DeepFakeDetection-JPEG', 'DeepFakeDetection-S_W', 'DeepFakeDetection-TEXT', DeepFakeDetection-TEXT-Augen', 'Celeb-DF-v1', 'Celeb-DF-v2','Celeb-DF-v2-FACE', 'Celeb-DF-v2-JPEG', 'Celeb-DF-v2-S_W', 'Celeb-DF-v2-TEXT', 'Celeb-DF-v2-TEXT-Augen', 'DFDCP', 'DFDC', 'DeeperForensics-1.0','UADFV','FaceShifter']
+    default: 'DeepFakeDetection-TEXT-Augen' # hier: Celeb-DF-v2 oder FaceForensics++
   dataset_root_path: # the root path to the dataset
     type: str
     default: '/media/user/PortableSSD/datasets/rgb' # hier anpassen: .../datasets/rgb

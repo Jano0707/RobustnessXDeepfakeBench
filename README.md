@@ -20,6 +20,16 @@ Das Repository ist in zwei Hauptordner unterteilt:
   - Hinzufügen von Text-Overlays   
 Details zu den einzelnen Manipulationen und zu den Änderungen am Originalprojekt *face-smoothing* finden sich in [`/Bildmanipulationen/README.md`](Bildmanipulationen/README.md).
 
+## 🚀 Inbetriebnahme
+
+1. Anaconda-Download: https://repo.anaconda.com/archive/Anaconda3-2025.06-1-Linux-x86_64.sh 
+2. git clone https://github.com/Jano0707/RobustnessXDeepfakeBench.git
+3. cd DeepfakeBench
+4. ./install.sh 
+$\rightarrow$ falls Probleme mit dlib auftauchen: conda install -c conda-forge dlib=19.24.0=py38*
+5. conda create -n DFBench
+6. conda activate DFBench (muss sowohl für alle Schritte in DeepfakeBench, als auch für die Bildmanipulationen aktiv sein)
+
 ## Drittanbieter-Software und Lizenzen
 
 Dieses Projekt basiert auf und nutzt unter anderem folgende Open-Source-Software:

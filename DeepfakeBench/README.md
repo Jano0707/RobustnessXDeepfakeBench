@@ -28,13 +28,12 @@ Neben den allgemeinen Informationen aus der Original-README sind hier:
   ```
   cd DeepfakeBench
   python convert_effort_ckpt.py training/weights/effort_clip_L14_trainOn_FaceForensic.pth training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth
-  ``
+  ```
 
 ### 2. Datensätze herunterladen
   Alle Datensätze müssen axakt so abgelegt werden, wie es im folgenden beschrieben wird.
   Speicherort: `DeepfakeBench/datasets/rgb/`
   
-  --
 
 #### FaceForensics++  
 $\rightarrow$ Basis für *Baseline-Generalisierung* und *Within-Domain-Tests*  
@@ -165,7 +164,7 @@ python preprocessing/dataset2lmdb_test.py --dataset_size <SIZE>
 Zur Simulation sozialmedientypischer Veränderungen werden Duplikate der Datensätze erzeugt und **Bildmanipulationen** auf die jeweiligen `frames/`-Ordner angewandt.
 
 > **Namenskonvention:**  
-> Erzeuge Kopien von DeepFakeDetection und Celeb-DF-v2 mit Suffixen wie `-S_W` (Schwarz/Weiß), `-JPEG`, `-TEXT`, `-TEXT-Mund`, `-FACE` (Face Smoothing).  
+> Erzeuge Kopien von DeepFakeDetection und Celeb-DF-v2 mit Suffixen wie `-S_W` (Schwarz/Weiß), `-JPEG`, `-TEXT`, `-TEXT-Augen`, `-FACE` (Face Smoothing).  
 > Beispiel: `Celeb-DF-v2-S_W`, `DeepFakeDetection-JPEG`, …
 
 **Beispielanwendungen der Bildmanipulationen:**
@@ -205,7 +204,7 @@ python3 training/test.py
 **Parameter:**
 - `<Detektor>`: `xception` | `effort`  
 - `<Experiment>`: `gen` (Generalisierung) | `rob` (Robustheit)  
-- `<Test>`: `Baseline` | `Within-Domain` | `Cross-Domain` | `JPEG` | `S_W` | `Glättung` | `Text`
+- `<Test>`: `Baseline` | `Within-Domain` | `Cross-Domain` | `JPEG` | `Schwarz-Weiss` | `Gesichtsglaettung` | `Text-Overlay` | `Text-Overlay-Augen`
 
 **Beispiele:**
 
@@ -255,7 +254,7 @@ python3 training/test.py
 Metriken werden in der Konsole ausgegeben und unter `analysis_output/metrics/` gespeichert. Die nachfolgenden Skripte erzeugen Tabellen, ROC-Kurven und t-SNE-Plots. Die Skripte filtern ahand der in `training/test.py` gesetzten Argumente --exp und --tag und erzeugen somit automatisch die gewünschten Abbildungen.
 
 **Tabellen:**
-Erstellt pro Experiment (Generalisierung, Robustheit) eine zusammenfassende Tabelle mit allen verwendeten Datensätzen und Detektoren (AUC, ACC und EER). Die Ergebnisse landen in `analysis_output/tables`. 
+Erstellt pro Experiment (Generalisierung, Robustheit) eine zusammenfassende Tabelle mit allen verwendeten Datensätzen und Detektoren (AUC, ACC). Die Ergebnisse landen in `analysis_output/tables`. 
 
 ```
 python analysis/create_tables.py
@@ -268,24 +267,18 @@ Erzeugt ROC-Kurven je Datensatz und Detektor.
 python analysis/plot_roc.py
 ```
 
-**t-SNE Visualisierungen der Merkmalsräume:**
-Reduziert die Feature-Vektoren auf 2D und visualisiert Cluster. (Hinweis: Effort verwendet 1024-D-Features, Xception 2048-D)
-
-```
-python analysis/tsne.py
-```
 
 ### ⚙️ Änderungen am Framework
 
-Dieser Abschnitt dokumentiert alle Anpassungen am DeepfakeBench-Framework, die für die Reproduktion der Experimente im Rahmen der Bachelorarbeit erforderlich sind. Ziel der Änderungen ist eine robuste Auswertung (AUC, ACC, EER), klare Nachvollziehbarkeit über `--exp`/`--tag`, die Unterstützung manipulierter Datensätze sowie reproduzierbare Visualisierungen.
+Dieser Abschnitt dokumentiert alle Anpassungen am DeepfakeBench-Framework, die für die Reproduktion der Experimente im Rahmen der Bachelorarbeit erforderlich sind. Ziel der Änderungen ist eine robuste Auswertung (AUC, ACC), klare Nachvollziehbarkeit über `--exp`/`--tag`, die Unterstützung manipulierter Datensätze sowie reproduzierbare Visualisierungen.
 
 ---
 
 #### `training/test.py`
-- Speichert sämtliche Metriken (AUC, ACC, EER) unter `analysis_output/metrics/`, sodass Analyse-Skripte diese automatisiert einlesen können.
+- Speichert sämtliche Metriken (AUC, ACC) unter `analysis_output/metrics/`, sodass Analyse-Skripte diese automatisiert einlesen können.
 - Neue CLI-Argumente:
   - `--exp` für das Experiment (`gen` = Generalisierung, `rob` = Robustheit).
-  - `--tag` für den konkreten Test (z. B. `Baseline`, `Within-Domain`, `Cross-Domain`, `JPEG`, `S_W`, `Text`, `Glättung`).
+  - `--tag` für den konkreten Test (z. B. `Baseline`, `Within-Domain`, `Cross-Domain`, `JPEG`, `Schwarz-Weiss`, `Text-Overlay`, `Text-Overlay-Augen`, `Gesichtsglaettung`).
 - Gibt die Anzahl der verwendeten Bilder/Frames aus (Transparenz bei Train/Test-Zuschnitt).
 - Optionale Nutzung der Trainingsmenge als Testmenge (für Baseline-Generalisierung).
 - Kompatibilität mit Effort-Gewichten in Kombination mit dem Hilfsskript `convert_effort_ckpt.py`.
@@ -314,10 +307,8 @@ Dieser Abschnitt dokumentiert alle Anpassungen am DeepfakeBench-Framework, die f
 ---
 
 #### Analyse-Skripte (`analysis/`)
-- `create_tables.py` – Metriken pro Experiment/Test zu Tabellen (CSV) nach `analysis_output/tables/` und bildet zusätzlich den AUC-Durchschnitt pro Detektor ab.
+- `create_tables.py` – Metriken pro Experiment/Test zu Tabellen (CSV) nach `analysis_output/tables/` und bildet zusätzlich den AUC-Durchschnitt pro Detektor ab. Danach wird, falls vorhanden für die Robustheitstests ein Balkendiagramm erstellt, in dem der Effekt zur Baseline dargestellt wird (jeweils für jede Detektor-Datensatz-Kombination).
 - `plot_roc.py` – Erzeugt ROC-Kurven (inkl. AUC) je Datensatz/Detektor und schreibt Abbildungen nach `analysis_output/plots/`.
-- `plot_tsne.py` – Visualisiert Merkmalsräume (z. B. Xception 2048-D, Effort 1024-D → 2-D) und schreibt Abbildungen nach `analysis_output/plots/`.
-
 ---
 
 #### Hilfsskript `convert_effort_ckpt.py`

@@ -31,6 +31,5 @@ def main(inp, outp):
 
 if __name__ == "__main__":
     if len(sys.argv) != 3:
-        print("Usage: python tools/convert_effort_ckpt.py <input_ckpt.pth> <output_ckpt_stripped.pth>")
         sys.exit(1)
     main(sys.argv[1], sys.argv[2])
