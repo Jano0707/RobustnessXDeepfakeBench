@@ -339,6 +339,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
             ValueError: If the loaded image is None.
         """
         size = self.config['resolution'] # if self.mode == "train" else self.config['resolution']
+        print(f"Pfad: {file_path}")
         if not self.lmdb:
             #if not file_path[0] == '.':
                 #file_path =  f'./{self.config["rgb_dir"]}\\'+file_path
@@ -349,6 +350,7 @@ class DeepfakeAbstractBaseDataset(data.Dataset):
                 raise ValueError('Loaded image is None: {}'.format(file_path))
         elif self.lmdb:
             key = self._lmdb_key_from_abs_rgb(file_path)
+            print(f"key: {key}")
             with self.env.begin(write=False) as txn:
                 image_bin = txn.get(key.encode('utf-8'))
                 if image_bin is None:

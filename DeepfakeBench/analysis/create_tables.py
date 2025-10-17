@@ -70,7 +70,7 @@ def _parse_tag_like(raw_tag: str):
 def _display_dataset_name(dset: str) -> str:
     """
     Anzeige-Name des Datasets.
-    Erkannt werden folgende (case-insensitive) Endungen – längste zuerst:
+    Erkannt werden folgende (case-insensitive) Endungen - längste zuerst:
       -TEXT-Augen  -> -Text-Overlay-Augen
       -TEXT        -> -Text-Overlay
       -FACE        -> -Gesichtsglättung
@@ -102,7 +102,7 @@ def _display_dataset_name(dset: str) -> str:
     
 # Priorität in E1 (Gen)
 _GEN_TAG_ORDER = {"Baseline": 0, "Within-Domain": 1, "Cross-Domain": 2}
-# Priorität in E2 (Rob) – vorausgesetzte Reihenfolge nach Baseline:
+# Priorität in E2 (Rob) - vorausgesetzte Reihenfolge nach Baseline:
 # Schwarz-Weiß, JPEG, Gesichtsglättung, Text-Overlay, Text-Overlay-Augen
 _ROB_GROUP_ORDER = {
     "Baseline": 0,

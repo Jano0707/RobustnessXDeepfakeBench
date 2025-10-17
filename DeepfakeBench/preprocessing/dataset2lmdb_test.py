@@ -25,7 +25,7 @@ def create_lmdb_dataset(source_folder, lmdb_path, dataset_name, map_size):
     env = lmdb.open(
         lmdb_path,
         map_size=map_size,
-        subdir=True,          # wir wollen data.mdb/lock.mdb in einem Ordner
+        subdir=True,
         lock=True,
         readahead=False,
         writemap=False,
@@ -45,7 +45,7 @@ def create_lmdb_dataset(source_folder, lmdb_path, dataset_name, map_size):
     txn = env.begin(write=True)
 
     try:
-        # Wir iterieren rekursiv über source_folder
+        # iterieren rekursiv über source_folder
         for root, dirs, files in os.walk(source_folder, followlinks=True):
             # explizit .mp4 ignorieren
             files = [f for f in files if f.lower().endswith(ALLOWED)]

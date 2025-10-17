@@ -2,7 +2,7 @@
 ## 🔧 Nutzung im Rahmen der Bachelorarbeit
 
 
-Dieses Repository enthält eine angepasste Version von **DeepfakeBench**, die im Rahmen einer Bachelorarbeit erweitert wurde. Ziel ist es, die Durchführung und Nachvollziehbarkeit von Experimenten zu erleichtern.  
+Dieses Repository enthält eine angepasste Version von **DeepfakeBench**, die im Rahmen einer Bachelorarbeit erweitert wurde.  
 Neben den allgemeinen Informationen aus der Original-README sind hier:
 
 1. **Eine Schritt-für-Schritt-Anleitung** zur Reproduktion der Experimente enthalten.  
@@ -192,12 +192,12 @@ Passe in `training/config/test_config.yaml` die Pfade zu **LMDB** und **dataset_
 
 **Generisches Testkommando:**
 ```
-python3 training/test.py
---detector_path ./training/config/detector/<Detektor>.yaml
---test_dataset "<Datensatzname>"
---weights_path ./training/weights/<Detektor>.pth
---exp <Experiment>
---tag <Test>
+python3 training/test.py \
+--detector_path ./training/config/detector/<Detektor>.yaml \
+--test_dataset "<Datensatzname>" \
+--weights_path ./training/weights/<Detektor>.pth \
+--exp <Experiment> \
+--tag <Test> \
 --metric_outdir analysis_output/metrics
 ```
 
@@ -212,12 +212,12 @@ Baseline-Generalisierung mit Xception auf der Trainingsmenge von FF++:
 Ändere in `training/test.py` `use_train_data = True`.
 
 ```
-python3 training/test.py
---detector_path ./training/config/detector/xception.yaml
---test_dataset "FaceForensics++"
---weights_path ./training/weights/xception_best.pth
---exp gen
---tag Baseline
+python3 training/test.py \
+--detector_path ./training/config/detector/xception.yaml \
+--test_dataset "FaceForensics++" \
+--weights_path ./training/weights/xception_best.pth \
+--exp gen \
+--tag Baseline \
 --metric_outdir analysis_output/metrics
 ```
 
@@ -225,12 +225,12 @@ Cross-Domain mit Effort auf Celeb-DF-v2:
 Ändere wieder `training/test.py` `use_train_data = False`.
 
 ```
-python3 training/test.py
---detector_path ./training/config/detector/effort.yaml
---test_dataset "Celeb-DF-v2"
---weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth
---exp gen
---tag Cross-Domain
+python3 training/test.py \
+--detector_path ./training/config/detector/effort.yaml \
+--test_dataset "Celeb-DF-v2" \
+--weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth \
+--exp gen \
+--tag Cross-Domain \
 --metric_outdir analysis_output/metrics
 ```
 
@@ -238,12 +238,12 @@ Robustheitstest mit Effort auf DeepFakeDetection-JPEG:
 Weiterhin `training/test.py` `use_train_data = False`.
 
 ```
-python3 training/test.py
---detector_path ./training/config/detector/effort.yaml
---test_dataset "DeepFakeDetection-JPEG"
---weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth
---exp rob
---tag JPEG
+python3 training/test.py \
+--detector_path ./training/config/detector/effort.yaml \
+--test_dataset "DeepFakeDetection-JPEG" \
+--weights_path ./training/weights/effort_clip_L14_trainOn_FaceForensic_stripped.pth \
+--exp rob \
+--tag JPEG \
 --metric_outdir analysis_output/metrics
 ```
 
@@ -287,15 +287,14 @@ Dieser Abschnitt dokumentiert alle Anpassungen am DeepfakeBench-Framework, die f
 
 #### Detektor-Konfigurationen (`training/config/detector/*.yaml`)
 - Standardisierte Frames/Video:
-  - 8 Frames für FaceForensics++.
-  - 4 Frames für DeepFakeDetection.
-- Bereinigung/Vereinheitlichung der Test-Configs für reproduzierbare Läufe (keine trainingsspezifischen Optionen in Test-Configs).
+  - 8 Frames für FaceForensics++
+  - 4 Frames für DeepFakeDetection
 
 ---
 
 #### `preprocessing/config.yaml`
 - Erweiterung zur Unterstützung manipulierter Datensätze mit Suffixen:
-  - `-S_W` (Schwarz/Weiß), `-JPEG`, `-TEXT`, `-FACE` (Face Smoothing).
+  - `-S_W` (Schwarz/Weiß), `-JPEG`, `-TEXT`, `-TEXT-Augen`, `-FACE` (Face Smoothing).
 
 ---
 
@@ -307,13 +306,13 @@ Dieser Abschnitt dokumentiert alle Anpassungen am DeepfakeBench-Framework, die f
 ---
 
 #### Analyse-Skripte (`analysis/`)
-- `create_tables.py` – Metriken pro Experiment/Test zu Tabellen (CSV) nach `analysis_output/tables/` und bildet zusätzlich den AUC-Durchschnitt pro Detektor ab. Danach wird, falls vorhanden für die Robustheitstests ein Balkendiagramm erstellt, in dem der Effekt zur Baseline dargestellt wird (jeweils für jede Detektor-Datensatz-Kombination).
-- `plot_roc.py` – Erzeugt ROC-Kurven (inkl. AUC) je Datensatz/Detektor und schreibt Abbildungen nach `analysis_output/plots/`.
+- `create_tables.py` - Metriken pro Experiment/Test zu Tabellen (CSV) nach `analysis_output/tables/` und bildet zusätzlich den AUC-Durchschnitt pro Detektor ab. Danach wird, falls vorhanden für die Robustheitstests ein Balkendiagramm erstellt, in dem der Effekt zur Baseline dargestellt wird (jeweils für jede Detektor-Datensatz-Kombination).
+- `plot_roc.py` - Erzeugt ROC-Kurven (inkl. AUC) je Datensatz/Detektor und schreibt Abbildungen nach `analysis_output/plots/`.
 ---
 
 #### Hilfsskript `convert_effort_ckpt.py`
 - Entfernt inkompatible Prefixe in Effort-Checkpoints, damit diese mit dem Testskript geladen werden können.
-- Beispielaufruf (4-Space-Codeblock):
+- Aufruf:
     
     ```
     cd DeepfakeBench
@@ -328,7 +327,7 @@ Dieser Abschnitt dokumentiert alle Anpassungen am DeepfakeBench-Framework, die f
 ---
 
 #### Namens- und Strukturkonventionen
-- Einheitliche Tags für Tests (z. B. `Baseline`, `Within-Domain`, `Cross-Domain`, `JPEG`, `S_W`, `Text`, `Glättung`) zur automatischen Filterung in den Analyse-Skripten.
+- Einheitliche Tags für Tests (z. B. `Baseline`, `Within-Domain`, `Cross-Domain`, `JPEG`, `Schwarz-Weiss`, `Text`, `Text-Augen`, `Gesichtsglaettung`) zur automatischen Filterung in den Analyse-Skripten.
 - Einheitliche Ablagepfade:
   - Metriken: `analysis_output/metrics/`
   - Tabellen: `analysis_output/tables/`

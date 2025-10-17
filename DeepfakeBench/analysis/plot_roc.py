@@ -39,10 +39,6 @@ def _infer_from_name(stem: str, idx: int, default=None):
     return parts[idx] if 0 <= idx < len(parts) else default
 
 def _norm_variant(v: str) -> str:
-    """
-    Normalisiert Schreibweisen und Kurzformen auf die kanonischen Varianten.
-    Akzeptiert auch 'domain', 'cross domain', 'weiss', 'smoothing', 'augen', 'text' etc.
-    """
     if not v:
         return ""
     s = str(v).strip().lower().replace("_", "-").replace("  ", " ")
@@ -50,11 +46,11 @@ def _norm_variant(v: str) -> str:
     # Häufige Kurzformen/Abkürzungen auffangen
     aliases = {
         "baseline": "Baseline",
-        "gen": "Baseline",  # falls mal nur 'gen' steht
+        "gen": "Baseline",
         "within": "Within-Domain",
         "within-domain": "Within-Domain",
         "within domain": "Within-Domain",
-        "domain": "Within-Domain",  # <- aus deinem Dump
+        "domain": "Within-Domain",
         "cross": "Cross-Domain",
         "cross-domain": "Cross-Domain",
         "cross domain": "Cross-Domain",
@@ -167,7 +163,7 @@ def _augment_with_baseline_for_rob(df_all: pd.DataFrame, df_sub: pd.DataFrame) -
         (df_all["dataset"].astype(str) == base0)
     ]
     if baseline.empty:
-        return df_sub  # nichts zu ergänzen
+        return df_sub
 
     cols = list(df_sub.columns)
     aug = pd.concat([baseline[cols], df_sub[cols]], axis=0, ignore_index=True)
@@ -187,7 +183,7 @@ def load_metric_file(fp: Path):
         exp, tag_norm, _ = _parse_tag_like(tag_raw)
     else:
         _, tag_norm, _ = _parse_tag_like(tag_raw)
-    # Pfade
+
     ytrue = lo.get("y_true_path") or lo.get("ytrue_path")
     yscore= lo.get("y_score_path") or lo.get("yscore_path")
     return {
@@ -381,7 +377,7 @@ def plot_ffpp_within_domain(dff: pd.DataFrame, outdir: Path, search_root: Path):
         search_root=search_root,
         legend_formatter=legend_fmt,
         title_prefix="ROC - ",
-        forced_fname=forced_fname  # <— nutzt deinen erweiterten plot_one
+        forced_fname=forced_fname
     )
 
 

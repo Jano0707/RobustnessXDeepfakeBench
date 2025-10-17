@@ -10,7 +10,7 @@ from sklearn.metrics import confusion_matrix, precision_recall_fscore_support, a
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle
 
-# ---------- Utils ----------
+# ---------- Helper ----------
 def _load_json(fp: Path):
     with open(fp, "r", encoding="utf-8") as f:
         return json.load(f)
@@ -45,7 +45,7 @@ def _latex_escape(s: str) -> str:
 
 def _write_latex_cm(tp, fp, fn, tn, caption, out_tex: Path):
     """
-    LaTeX im exakten Layout (NiceTabular) – wie von dir vorgegeben.
+    Konfusionsmatrix in LaTeX
     RP=TP, FP=FP, FN=FN, RN=TN
     """
     tex = rf"""\definecolor{{
@@ -79,15 +79,7 @@ subblue
     out_tex.parent.mkdir(parents=True, exist_ok=True)
     out_tex.write_text(tex, encoding="utf-8")
 
-# ---------- PNG-Renderer (LaTeX-Look in Matplotlib) ----------
 def _render_png_cm(tp, fp, fn, tn, caption: str, out_png: Path):
-    """
-    Zeichnet eine PNG, die dem LaTeX-Layout sehr nahe kommt:
-    - headerblue: RGB(200,210,255)  -> #C8D2FF
-    - subblue   : RGB(230,235,255)  -> #E6EBFF
-    - gleiche Spaltenbreiten wie in der Vorlage (proportional zu cm-Werten)
-    - links eine 2x1 Blockzelle mit vertikaler Beschriftung
-    """
     HEADER = "#C8D2FF"
     SUB    = "#E6EBFF"
     EDGE   = "#D0D7DE"
@@ -124,12 +116,11 @@ def _render_png_cm(tp, fp, fn, tn, caption: str, out_png: Path):
             ax.text(x + w/2, y + h/2, text, ha=ha, va=va, color=color,
                     fontsize=fontsize, weight=weight, rotation=rotation)
 
-    # Koordinatensystem: y von unten nach oben; wir bauen von oben nach unten:
     y_top = total_h + 0.9
 
     # Header-Zeile 1 (RowStyle rowcolor headerblue)
     y = y_top - h_header1
-    # Spalte 0 (leer, aber grau gefüllt) – in LaTeX steht hier nichts
+    # Spalte 0 (leer, aber grau gefüllt) - in LaTeX steht hier nichts
     draw_cell(0, y, col_widths[0], h_header1, HEADER, text="", ha="center", va="center")
     # Spalte 1 (leer, aber grau)
     draw_cell(x_at(1), y, col_widths[1], h_header1, HEADER, text="", ha="center", va="center")
@@ -144,7 +135,7 @@ def _render_png_cm(tp, fp, fn, tn, caption: str, out_png: Path):
     y = y - h_header2
     # Erste Zelle (Spalte 0) bleibt im headerblue (wie \cellcolor{headerblue})
     draw_cell(0, y, col_widths[0], h_header2, HEADER, text="")
-    # Spalte 1: subblue + "Positiv" (links ausgerichtet laut LaTeX p-Spalte, aber wir nehmen fett zentriert)
+    # Spalte 1: subblue + "Positiv"
     draw_cell(x_at(1), y, col_widths[1], h_header2, SUB, text=r"\textbf{Positiv}",
               fontsize=9.5, weight="bold")
     # Spalte 2: subblue + "Positiv"
@@ -228,7 +219,7 @@ def build_confusions_from_saved(results_dir: Path,
 
 # ---------- CLI ----------
 def main():
-    # Gleicher CLI-Stil & Defaults wie create_tables.py (relativ zum CWD)
+    # Gleicher CLI-Stil & Defaults wie create_tables.py
     ap = argparse.ArgumentParser(
         description="Erzeuge Konfusionsmatrizen (LaTeX + PNG) aus gespeicherten y_true/y_score."
     )

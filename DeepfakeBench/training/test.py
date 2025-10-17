@@ -292,7 +292,7 @@ def main():
     """ 
     Trainingsergebnisse für FaceForensics c23 -> Basis für Generalisierung
     
-    Trainingssplit für FaceForensics++-Familie evaluieren, aber weiter im Eval-Modus (keine Augmentierung)
+    Trainingssplit für FaceForensics++ evaluieren, aber weiter im Eval-Modus (keine Augmentierung)
     
     -> falls normale Tests --> setze train_result = false
     """
